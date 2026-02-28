@@ -1,0 +1,28 @@
+name: Daily Auto Commit
+
+on:
+  schedule:
+    # Runs daily at 2:30 AM UTC (specific time, no wildcards)
+    - cron: '30 2 * * *'
+  workflow_dispatch:  # Lets you test manually
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Step by 23f2002819@ds.study.iitm.ac.in - Update status file
+        run: |
+          echo "$(date): Daily automated update for DevSync compliance." >> status.log
+
+      - name: Commit changes
+        run: |
+          git config user.name "DevSync Bot"
+          git config user.email "23f2002819@ds.study.iitm.ac.in"
+          git add status.log
+          git commit -m "Daily update: Activity tracking and compliance [$(date +%Y-%m-%d)]" || echo "No changes to commit"
+          git push
